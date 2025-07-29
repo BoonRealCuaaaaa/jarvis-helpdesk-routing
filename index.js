@@ -44,6 +44,9 @@ async function forwardRequest(req, res, type) {
       .send(err.response?.data || { error: 'Internal error' });
   }
 }
+app.get("/health", (req, res) => {
+  res.send({ status: "OK" });
+});
 
 // Route: /comment-webhook/:id
 app.all('/api/v1/zendesk/comment-webhook/:id', async (req, res) => {
