@@ -104,20 +104,19 @@ app.get('/api/v1/zoho-desk/callback', async (req, res) => {
       url,
       headers: {
         ...cleanHeaders(req.headers),
-        'User-Agent': 'MyNodeForwarder/1.0',
-        'Content-Type': 'application/json'
+        'User-Agent': 'MyNodeForwarder/1.0'
       },
-      params: req.query, // Forward query parameters
+      params: req.query,
+      maxRedirects: 0, // Không cho axios tự follow redirect
+      validateStatus: status => status >= 200 && status < 400, // Chấp nhận status 3xx
       httpsAgent
     });
 
-    // If the response is a redirect (302), follow it
     if (response.status === 302 && response.headers.location) {
-      return res.redirect(response.headers.location);
+      return res.redirect(response.headers.location); // Redirect thẳng tới frontend
     }
 
-    // // Otherwise, return the response as-is
-    // res.status(response.status).send(response.data);
+    res.status(response.status).send(response.data);
   } catch (err) {
     console.error(`❌ Error forwarding Zoho Desk callback:`, err.message);
     res
