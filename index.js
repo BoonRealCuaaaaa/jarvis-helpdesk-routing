@@ -95,6 +95,37 @@ app.all('/api/v1/zoho-desk/webhook/callback', async (req, res) => {
   }
 });
 
+app.get('/api/v1/zoho-desk/callback', async (req, res) => {
+  const url = 'https://plugins-api.jarvis.cx/api/v1/zoho-desk/callback';
+
+  try {
+    const response = await axios({
+      method: 'GET',
+      url,
+      headers: {
+        ...cleanHeaders(req.headers),
+        'User-Agent': 'MyNodeForwarder/1.0',
+        'Content-Type': 'application/json'
+      },
+      params: req.query, // Forward query parameters
+      httpsAgent
+    });
+
+    // If the response is a redirect (302), follow it
+    if (response.status === 302 && response.headers.location) {
+      return res.redirect(response.headers.location);
+    }
+
+    // Otherwise, return the response as-is
+    res.status(response.status).send(response.data);
+  } catch (err) {
+    console.error(`❌ Error forwarding Zoho Desk callback:`, err.message);
+    res
+      .status(err.response?.status || 500)
+      .send(err.response?.data || { error: 'Internal error' });
+  }
+});
+
 // Health check route
 app.all('/', (req, res) => {
   res.send({ status: 'OK', message: 'Webhook forwarder is running' });
