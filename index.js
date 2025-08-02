@@ -116,8 +116,8 @@ app.get('/api/v1/zoho-desk/callback', async (req, res) => {
       return res.redirect(response.headers.location);
     }
 
-    // Otherwise, return the response as-is
-    res.status(response.status).send(response.data);
+    // // Otherwise, return the response as-is
+    // res.status(response.status).send(response.data);
   } catch (err) {
     console.error(`❌ Error forwarding Zoho Desk callback:`, err.message);
     res
