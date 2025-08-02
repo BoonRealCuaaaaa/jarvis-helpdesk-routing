@@ -112,6 +112,8 @@ app.get('/api/v1/zoho-desk/callback', async (req, res) => {
       httpsAgent
     });
 
+    console.log(response);
+
     if (response.status === 302 && response.headers.location) {
       return res.redirect(response.headers.location); // Redirect thẳng tới frontend
     }
